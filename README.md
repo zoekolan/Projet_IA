@@ -40,3 +40,4 @@ Tip: to debug your AI use a small board (2, 3, 4).
 
 Use the `--no-ui` and `--games` options to run a lot of simulation quickly.
 For example, `python main.py --player random --other minimax --no-ui -- games 100` will run 100 games between random AI and minimax AI.
+# Projet_IA
