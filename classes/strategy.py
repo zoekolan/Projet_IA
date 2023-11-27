@@ -8,8 +8,7 @@ from rich.table import Table
 from rich.progress import track
 from rich.console import Console
 from rich.progress import Progress
-import classes.game as game
-
+#import classes.game as game
 import classes.logic as logic
 
 # When implementing a new strategy add it to the `str2strat`
@@ -114,6 +113,10 @@ class MiniMax(PlayerStrat):
             return value, action
 
         return max_value(_board_state, player)
+
+    def start(self):
+        move, a = self.minimax_search(self.root_state, self.player)
+        return move
 
 str2strat: dict[str, PlayerStrat] = {
         "human": None,
