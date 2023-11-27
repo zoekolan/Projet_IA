@@ -8,6 +8,7 @@ from rich.table import Table
 from rich.progress import track
 from rich.console import Console
 from rich.progress import Progress
+import game
 
 import classes.logic as logic
 
@@ -64,8 +65,46 @@ class MiniMax(PlayerStrat):
     def init(self, _board_state, player):
         super().init(_board_state, player)
 
-    def start(self):
-        return random.choice(logic.get_possible_moves(self.root_state))
+    def minimax_search(_board_state, player):
+        infinity = math.inf
+
+        def utility(self, _board_state, player):
+            """Return the value to player; 1 for win, -1 for loss, 0 otherwise."""
+            player_opponent = 2 if player  == 1 else 1
+            if logic.is_game_over(player, _board_state) == player:
+                return 1
+            elif logic.is_game_over(player_opponent, _board_state) == player_opponent:
+                return -1
+            else:
+                return 0
+
+        def max_value( _board_state):
+            if logic.is_game_over(player, _board_state):
+                return utility( _board_state, player), None
+            value = -infinity
+            action = None
+            actions = game.actions( _board_state) #TODO : implémenter actions
+            for a in actions:
+                v2, a2 = min_value(game.result( _board_state, a)) #TODO : implémenter result
+                if v2 > value :
+                    value = v2
+                    action = a
+            return value, action
+
+        def min_value( _board_state):
+            if game.is_terminal( _board_state):
+                return game.utility( _board_state, player), None
+            value = infinity
+            action = None
+            actions = game.actions( _board_state)
+            for a in actions:
+                v2, a2 = max_value(game.result( _board_state, a))
+                if v2 < value :
+                    value = v2
+                    action = a
+            return value, action
+
+        return max_value(_board_state)
 
 str2strat: dict[str, PlayerStrat] = {
         "human": None,
