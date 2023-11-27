@@ -8,7 +8,7 @@ from rich.table import Table
 from rich.progress import track
 from rich.console import Console
 from rich.progress import Progress
-import game
+import classes.game as game
 
 import classes.logic as logic
 
@@ -72,39 +72,48 @@ class MiniMax(PlayerStrat):
             """Return the value to player; 1 for win, -1 for loss, 0 otherwise."""
             player_opponent = 2 if player  == 1 else 1
             if logic.is_game_over(player, _board_state) == player:
-                return 1
+                utility = 1
             elif logic.is_game_over(player_opponent, _board_state) == player_opponent:
-                return -1
+                utility = -1
             else:
-                return 0
+                utility = 0
+            return utility
 
-        def max_value( _board_state):
+        def result(player, _board_state, node):
+            """Place a marker for current player on square."""
+            player = player
+            (x, y) = node
+            _board_state[x][y] = player
+            player = 1 if player == 2 else 2
+            return _board_state
+
+        def max_value( _board_state, player):
             if logic.is_game_over(player, _board_state):
                 return utility( _board_state, player), None
             value = -infinity
             action = None
-            actions = game.actions( _board_state) #TODO : implémenter actions
+            actions = logic.get_possible_moves(_board_state)
             for a in actions:
-                v2, a2 = min_value(game.result( _board_state, a)) #TODO : implémenter result
+                v2, a2 = min_value(result(player, _board_state, a))
                 if v2 > value :
                     value = v2
                     action = a
             return value, action
 
-        def min_value( _board_state):
-            if game.is_terminal( _board_state):
-                return game.utility( _board_state, player), None
+        def min_value( _board_state, player):
+            if logic.is_game_over(player, _board_state):
+                return utility( _board_state, player), None
             value = infinity
             action = None
-            actions = game.actions( _board_state)
+            actions = logic.get_possible_moves(_board_state)
             for a in actions:
-                v2, a2 = max_value(game.result( _board_state, a))
+                v2, a2 = max_value(result(player, _board_state, a))
                 if v2 < value :
                     value = v2
                     action = a
             return value, action
 
-        return max_value(_board_state)
+        return max_value(_board_state, player)
 
 str2strat: dict[str, PlayerStrat] = {
         "human": None,
