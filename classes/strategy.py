@@ -64,10 +64,11 @@ class MiniMax(PlayerStrat):
     def init(self, _board_state, player):
         super().init(_board_state, player)
 
-    def minimax_search(_board_state, player):
+    def minimax_search(self, _board_state, player):
         infinity = math.inf
+        self.player = player
 
-        def utility(self, _board_state, player):
+        def utility(_board_state, player):
             """Return the value to player; 1 for win, -1 for loss, 0 otherwise."""
             player_opponent = 2 if player  == 1 else 1
             if logic.is_game_over(player, _board_state) == player:
@@ -78,35 +79,40 @@ class MiniMax(PlayerStrat):
                 utility = 0
             return utility
 
-        def result(player, _board_state, node):
+        def result(player, _board_state, move):
             """Place a marker for current player on square."""
-            player = player
-            (x, y) = node
-            _board_state[x][y] = player
+            real_node = Node(copy.deepcopy(_board_state), move=move)
+            (x, y) = real_node.move
+            real_node.state[x][y] = player
+            #_board_state[x][y] = player
             player = 1 if player == 2 else 2
-            return _board_state
+            return real_node.state, player #_board_state
 
-        def max_value( _board_state, player):
+        def max_value(_board_state, player):
             if logic.is_game_over(player, _board_state):
                 return utility( _board_state, player), None
             value = -infinity
             action = None
             actions = logic.get_possible_moves(_board_state)
             for a in actions:
-                v2, a2 = min_value(result(player, _board_state, a))
+                new_board = result(player, _board_state, a)[0]
+                new_player = result(player, _board_state, a)[1]
+                v2, a2 = min_value(new_board, new_player)
                 if v2 > value :
                     value = v2
                     action = a
             return value, action
 
-        def min_value( _board_state, player):
+        def min_value(_board_state, player):
             if logic.is_game_over(player, _board_state):
                 return utility( _board_state, player), None
             value = infinity
             action = None
             actions = logic.get_possible_moves(_board_state)
             for a in actions:
-                v2, a2 = max_value(result(player, _board_state, a))
+                new_board = result(player, _board_state, a)[0]
+                new_player = result(player, _board_state, a)[1]
+                v2, a2 = max_value(new_board, new_player)
                 if v2 < value :
                     value = v2
                     action = a
@@ -115,10 +121,10 @@ class MiniMax(PlayerStrat):
         return max_value(_board_state, player)
 
     def start(self):
-        move, a = self.minimax_search(self.root_state, self.player)
+        value, move = self.minimax_search(self.root_state, self.player)
         return move
 
-str2strat: dict[str, PlayerStrat] = {
+str2strat = { #: dict[str, PlayerStrat]
         "human": None,
         "random": Random,
         "minimax": MiniMax,

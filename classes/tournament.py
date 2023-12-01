@@ -3,6 +3,7 @@ import pickle
 import logging
 from rich import print
 from rich.logging import RichHandler
+import time
 
 # Hide Pygame welcome message
 os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "hide"
@@ -58,7 +59,7 @@ class Tournament:
         )
         while game.winner is None:
             game.play()
-
+        
         print(f"{player2str[game.winner]} player ({self.STRAT[game.winner-1]}) wins!")
 
         return game.winner
@@ -79,6 +80,7 @@ class Tournament:
             winner = self.single_game(
                 black_starts=self.GAME_COUNT < self.N_GAMES / 2
             )
+
             scores[winner-1] += 1
             #moves_to_win[winner-1] += logic.get_nb_moves(BOARD, winner)
 
