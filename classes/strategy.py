@@ -82,41 +82,27 @@ class MiniMax(PlayerStrat):
         new_board[move] = player
         return new_board
 
-    #def max_value(_board_state, player):
     def max_value(self, _board_state):
         if logic.is_game_over(self.player_opponent, _board_state)!= None:
-            #print("game over", logic.is_game_over(self.player, _board_state))
             return self.utility( _board_state), None
         value = -math.inf
         action = None
-        actionsPossibles = logic.get_possible_moves(_board_state)
-        #print("actions_max", len(actionsPossibles))
-        for a in actionsPossibles :
+        for a in logic.get_possible_moves(_board_state) :
             new_board = self.result(self.player, _board_state, a)
             v2, a2 = self.min_value(new_board)
-            #v2, a2 = min_value(_board_state, player)
-            #print("Max - v2 et value",v2, value)
-            #print("Player dans Max  - ", player)
-            #input()
             if v2 > value :
                 value = v2
                 action = a
         return value, action
 
     def min_value(self, _board_state):
-        #player_op = 1 if player == 2 else 2
         if logic.is_game_over(self.player, _board_state) != None:
             return self.utility( _board_state), None
         value = math.inf
         action = None
-        actionsPossibles = logic.get_possible_moves(_board_state)
-        #print("actions_min", len(actionsPossibles))
-        for a in actionsPossibles:
+        for a in logic.get_possible_moves(_board_state):
             new_board = self.result(self.player_opponent, _board_state, a)
             v2, a2 = self.max_value(new_board)
-            #print("Min - v2 et value",v2, value)
-            #print("Player dans Min  - ", player)
-            #input()
             if v2 < value :
                 value = v2
                 action = a
