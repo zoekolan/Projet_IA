@@ -82,34 +82,40 @@ class MiniMax(PlayerStrat):
         new_board[move] = player
         return new_board
 
-    def max_value(self, _board_state):
+    def max_value(self, _board_state, alpha, beta):
         if logic.is_game_over(self.player_opponent, _board_state)!= None:
             return self.utility( _board_state), None
         value = -math.inf
         action = None
         for a in logic.get_possible_moves(_board_state) :
             new_board = self.result(self.player, _board_state, a)
-            v2, a2 = self.min_value(new_board)
+            v2, a2 = self.min_value(new_board, alpha, beta)
             if v2 > value :
                 value = v2
                 action = a
+                alpha = max(alpha, value)
+            if value >= beta:
+                return value, action
         return value, action
 
-    def min_value(self, _board_state):
+    def min_value(self, _board_state, alpha, beta):
         if logic.is_game_over(self.player, _board_state) != None:
             return self.utility( _board_state), None
         value = math.inf
         action = None
         for a in logic.get_possible_moves(_board_state):
             new_board = self.result(self.player_opponent, _board_state, a)
-            v2, a2 = self.max_value(new_board)
+            v2, a2 = self.max_value(new_board, alpha, beta)
             if v2 < value :
                 value = v2
                 action = a
+                beta = min(beta, value)
+            if value <= alpha:
+                return value, action
         return value, action
 
     def start(self):
-        return self.max_value(self.root_state)[1]
+        return self.max_value(self.root_state, -math.inf, math.inf)[1]
 
 str2strat = { #: dict[str, PlayerStrat]
         "human": None,
