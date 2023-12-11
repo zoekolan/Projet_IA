@@ -10,7 +10,7 @@ locations = [(0, 0), (1, 1), (2, 2)]
 #assign_weights(matrice, weights, locations)
 #print(matrice)
 
-def generate_hex_weights(n):
+def generate_hex_weights_with_cross(n):
     weights = [[0 for _ in range(n)] for _ in range(n)]
 
     # Poids pour les bords
@@ -28,23 +28,18 @@ def generate_hex_weights(n):
         weights[n // 2 - 1][n // 2 - 1] = center_weight
         weights[n // 2][n // 2] = center_weight
 
-    # Poids pour les positions adjacentes au centre
-    adjacent_center_weight = 80
+    # Poids pour la croix centrale
+    cross_weight = 80
     for i in range(n):
-        for j in range(n):
-            if (
-                (i, j) != (n // 2, n // 2)
-                and abs(i - n // 2) <= 1
-                and abs(j - n // 2) <= 1
-            ):
-                weights[i][j] = adjacent_center_weight
+        weights[i][n // 2] = cross_weight
+        weights[n // 2][i] = cross_weight
 
     return weights
 
 # Exemple d'utilisation avec une matrice de poids de taille 8x8
 n = 11
-weights = generate_hex_weights(n)
+weights_with_cross = generate_hex_weights_with_cross(n)
 
-# Affichage de la matrice de poids générée
-for row in weights:
+# Affichage de la matrice de poids générée avec la croix centrale
+for row in weights_with_cross:
     print(row)
