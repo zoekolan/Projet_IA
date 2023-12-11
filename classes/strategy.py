@@ -176,7 +176,9 @@ class MiniMaxEval(PlayerStrat):
         return new_board
 
     def max_value(self, _board_state, alpha, beta):
-        if self.depth >= 10:
+        if logic.is_game_over(self.player, _board_state)!= None:
+            return 10000, None
+        if self.depth >= 5:
             return self.utility(_board_state), None
 
         value = -math.inf
@@ -194,7 +196,9 @@ class MiniMaxEval(PlayerStrat):
         return value, action
 
     def min_value(self, _board_state, alpha, beta):
-        if self.depth >= 10:
+        if logic.is_game_over(self.player_opponent, _board_state)!= None:
+            return -10000, None
+        if self.depth >= 5:
             return self.utility(_board_state), None
 
         value = math.inf
