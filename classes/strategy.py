@@ -63,7 +63,6 @@ class MiniMax(PlayerStrat):
     # Build here the class implementing the MiniMax strategy
     def __init__(self, _board_state, player):
         super().__init__(_board_state, player)
-        print(player)
         self.player = player
         self.player_opponent = 3 - player
 
@@ -117,8 +116,109 @@ class MiniMax(PlayerStrat):
     def start(self):
         return self.max_value(self.root_state, -math.inf, math.inf)[1]
 
+class MiniMaxEval(PlayerStrat):
+    # Build here the class implementing the MiniMax strategy
+    def __init__(self, _board_state, player):
+        super().__init__(_board_state, player)
+        self.player = player
+        self.player_opponent = 3 - player
+        self.depth = 0
+
+    def generate_hex_weights(self, n):
+        weights = [[0 for _ in range(n)] for _ in range(n)]
+
+        # Poids pour les bords
+        border_weight = 50
+        for i in range(n):
+            for j in range(n):
+                if i == 0 or i == n - 1 or j == 0 or j == n - 1:
+                    weights[i][j] = border_weight
+
+        # Poids pour le centre
+        center_weight = 100
+        if n % 2 != 0:
+            weights[n // 2][n // 2] = center_weight
+        else:
+            weights[n // 2 - 1][n // 2 - 1] = center_weight
+            weights[n // 2][n // 2] = center_weight
+
+        # Poids pour les positions adjacentes au centre
+        adjacent_center_weight = 80
+        for i in range(n):
+            for j in range(n):
+                if (
+                    (i, j) != (n // 2, n // 2)
+                    and abs(i - n // 2) <= 1
+                    and abs(j - n // 2) <= 1
+                ):
+                    weights[i][j] = adjacent_center_weight
+
+        return weights
+
+    def utility(self, _board_state):
+        """Return le poids total du board - on cherhce à maximiser ce poids."""
+        weights = self.generate_hex_weights(len(_board_state))
+        myweight = 0
+        opponentweight = 0
+
+        for coord in logic.get_player_tiles(_board_state, self.player):
+            myweight += weights[coord[0]][coord[1]]
+
+        for coord in logic.get_player_tiles(_board_state, self.player_opponent):
+            opponentweight += weights[coord[0]][coord[1]]
+
+        return myweight - opponentweight
+
+    def result(self, player, _board_state, move):
+        """Place a marker for current player on square."""
+        new_board = _board_state.copy()
+        new_board[move] = player
+        return new_board
+
+    def max_value(self, _board_state, alpha, beta):
+        if self.depth >= 10:
+            return self.utility(_board_state), None
+
+        value = -math.inf
+        action = None
+        for a in logic.get_possible_moves(_board_state) :
+            new_board = self.result(self.player, _board_state, a)
+            v2, a2 = self.min_value(new_board, alpha, beta)
+            if v2 > value :
+                value = v2
+                action = a
+                alpha = max(alpha, value)
+            if value >= beta:
+                return value, action
+        self.depth += 1
+        return value, action
+
+    def min_value(self, _board_state, alpha, beta):
+        if self.depth >= 10:
+            return self.utility(_board_state), None
+
+        value = math.inf
+        action = None
+        for a in logic.get_possible_moves(_board_state):
+            new_board = self.result(self.player_opponent, _board_state, a)
+            v2, a2 = self.max_value(new_board, alpha, beta)
+            if v2 < value :
+                value = v2
+                action = a
+                beta = min(beta, value)
+            if value <= alpha:
+                return value, action
+        self.depth += 1
+        return value, action
+
+    def start(self):
+        return self.max_value(self.root_state, -math.inf, math.inf)[1]
+
+
+
 str2strat = { #: dict[str, PlayerStrat]
         "human": None,
         "random": Random,
         "minimax": MiniMax,
+        "minimaxeval": MiniMaxEval,
     }

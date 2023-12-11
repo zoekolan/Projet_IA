@@ -14,16 +14,6 @@ def get_possible_moves(board: np.ndarray) -> list:
     (x, y) = np.where(board == 0)
     return list(zip(x, y))
 
-''' NOTRE FONCTION GET EN DESSOUS - A TESTER '''''
-def get_nb_moves(board: np.ndarray, numPlayer) -> int:
-    """
-    @return   the number of ones in the board
-    """
-    (x, y) = np.where(board == numPlayer)
-    return len(list(zip(x, y)))
-''' FIN DE NOTRE FONCTION '''
-
-
 def get_player_tiles(board: np.ndarray, player: int) -> list:
     """
     @return   All the coordinates of nodes where the player played.
