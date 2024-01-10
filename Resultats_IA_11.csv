@@ -1,0 +1,8 @@
+IA1,IA2,SIZE,%GAGNE
+random,random,11,0.2
+random,minimaxeval,11,0.6
+minimaxeval,random,11,0.6
+random,minimaxcross,11,0.2
+minimaxcross,random,11,0.6
+minimaxeval,minimaxcross,11,-1
+minimaxcross,minimaxeval,11,-1
